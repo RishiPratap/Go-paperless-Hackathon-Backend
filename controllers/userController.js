@@ -122,10 +122,7 @@ const delete_contact = (req, res) => {
 module.exports = {
   user_register,
   getContacts,
-  getUserDetails,
-  updateUser,
   create_new_contact,
-  addFloor,
   get_contacts_in_same_org,
   delete_contact,
 };
