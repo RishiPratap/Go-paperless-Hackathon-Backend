@@ -20,71 +20,28 @@ const {
 } = require("firebase/firestore");
 
 
-// /api/users/login
-const user_login = async (req, res) => {
+// users/createnewuser
+const user_register = async (req, res) => {
+
+  // {name, rank, email, org}
+
   try {
     const userData = req.body;
-    const loginEmail = userData.loginEmail.split(" ")[0];
-    console.log(loginEmail, userData.loginPass);
-    const userCredentials = await signInWithEmailAndPassword(
-      auth,
-      loginEmail,
-      userData.loginPass
-    );
-    const uid = userCredentials.user.uid;
-    console.log(uid);
-    res.send(uid);
-  } catch (err) {
-    console.error(err.code?.split("/")[1]);
-    res.status(500).send(err.code?.split("/")[1]);
-  }
-};
+    console.log(userData);
+    const uid = userData.userName;
 
-// /api/users/signup
-const user_register = async (req, res) => {
-  try {
-    const hospitalData = req.body;
-    console.log(hospitalData);
-    const userCredentials = await createUserWithEmailAndPassword(
-      auth,
-      hospitalData.loginEmail,
-      hospitalData.loginPass
-    );
-    // console.log(userCredentials.user[operationType]);
-    delete hospitalData.loginPass;
-    const uid = userCredentials.user.uid;
+    //adding Users to firestore
 
-    //adding Hospital to firestore
-    const usersRef = doc(db, `hospitals/${uid}`);
+    const usersRef = doc(db, `users/${uid}`);
     const basic_doc_details = {
-      name: hospitalData.name,
-      email: hospitalData.loginEmail,
-      location: hospitalData.location,
-      geolocation : new GeoPoint(req.body.latitude, req.body.longitude),
-      hospId : uid,
+      name: userData.name,
+      email: userData.email,
+      rank: userData.rank,
+      org : userData.org,
+      userName : userData.userName,
     };
-    console.log("Basic Hospital Details",basic_doc_details);
+    console.log("Basic User Details",basic_doc_details);
     await setDoc(usersRef, basic_doc_details);
-
-    const floor_details = hospitalData.floors;
-    const total_floors = Object.keys(floor_details).length;
-    console.log(floor_details);
-    console.log(total_floors);
-    console.log(uid);
-
-    for (let i = 1; i <= total_floors; i++) {
-      const id = "F" + i.toString();
-      const total_rooms = floor_details[id];
-      const room_details = {};
-      for (let j = 1; j <= total_rooms; j++) {
-        room_details[i.toString() + get_room_number(j)] = false;
-      }
-      console.log(room_details);
-      // const floorRef = collection(db, `hospitals/${uid}/Rooms`);
-      const floor = doc(db, `hospitals/${uid}/Rooms/${id}`);
-      await setDoc(floor, room_details);
-    }
-    //updatingID
     res.status(200).send(uid);
   } catch (err) {
     console.log(err.code?.split("/")[1]);
@@ -92,20 +49,89 @@ const user_register = async (req, res) => {
   }
 };
 
-// users/getrooms
-const getRoom = async (req, res) => {
+// users/addcontact
+const create_new_contact = async (req, res) => {
+
+  // {email, contact_email, contact_alias}
+
   try {
     console.log(req.body);
-    const uid = req.body.hospId;
-    const collectionRef = collection(db, `hospitals/${uid}/Rooms`);
-    const userSnapshot = await getDocs(collectionRef);
-    const rooms_details = userSnapshot.docs.map((doc) => doc.data());
-    console.log(rooms_details);
-    res.send(rooms_details);
+    const uid = req.body.userName;
+    const docRef = doc(db, `users/${uid}/Contacts/${req.body.contact_username}`);
+
+    var contact_details = {
+      alias : req.body.contact_alias,
+      username : req.body.userName,
+      email : req.body.email
+    };
+    console.log("Contact Details",contact_details);
+    await setDoc(docRef, contact_details);
+    res.status(200).send("Contact Added Successfully");
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
+
+// users/getmycontacts
+const getContacts = async (req, res) => {
+  // {username, }
+
+  try{
+    const colRef = collection(db, `users/${req.body.username}/Contacts`);
+    const Snapshot = await getDocs(colRef);
+    const contactList = Snapshot.docs.map((doc) => doc.data());
+    console.log(contactList);
+    res.status(200).send(contactList);
+  } catch(err){
+    console.log(err.message);
+    res.status(500).send("Server error");
+  }
+};
+
+// users/getusersinorg
+const get_contacts_in_same_org = (req, res) => {
+  // {username, org}
+
+  try{
+    const docRef = doc(db, `users/${req.body.username}`);
+    const q = query(docRef, where("org", "==", req.body.org));
+    const Snapshot = await getDocs(q);
+    const contactList = Snapshot.docs.map((doc) => doc.data());
+    console.log(contactList);
+    res.status(200).send(contactList);
+  } catch(err) {
+    console.log(err.message);
+    res.status(500).send("Server error");
+  }
+};
+
+// users/deleteContact
+const delete_contact = (req, res) => {
+  // {username, contact_username}
+
+  try{
+    const docRef = doc(db, `users/${req.body.username}/Contacts/${req.body.contact_username}`);
+    await deleteDoc(docRef);
+    res.status(200).send(contactList);
+  } catch(err) {
+    console.log(err.message);
+    res.status(200).send("Server Error");
+  }
+};
+
+module.exports = {
+  user_register,
+  getContacts,
+  getUserDetails,
+  updateUser,
+  create_new_contact,
+  addFloor,
+  get_contacts_in_same_org,
+  delete_contact,
+};
+
+
+
 
 // users/gethospital
 const getUserDetails = async (req, res) => {
@@ -176,31 +202,6 @@ const addFloor = async (req, res) => {
     console.log(err.code?.split("/")[1]);
     res.status(500).send(err.code?.split("/")[1]);
   }
-};
-
-// /api/users/all
-const getAllUsers = async (req, res) => {
-  try {
-    const colref = collection(db, "hospitals");
-    const q = query(colref, where("location", "==", req.body.state));
-    const userSnapshot = await getDocs(q);
-    const userList = userSnapshot.docs.map((doc) => doc.data());
-    console.log(userList);
-    res.send(userList);
-  } catch (err) {
-    console.log(err.message);
-    res.status(500).send("Server error");
-  }
-};
-
-module.exports = {
-  user_register,
-  user_login,
-  getAllUsers,
-  getUserDetails,
-  updateUser,
-  getRoom,
-  addFloor,
 };
 
 //HELPER FUNCTIONS
