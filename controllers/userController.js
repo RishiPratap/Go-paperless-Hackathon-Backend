@@ -89,7 +89,7 @@ const getContacts = async (req, res) => {
 };
 
 // users/getusersinorg
-const get_contacts_in_same_org = (req, res) => {
+const get_contacts_in_same_org = async (req, res) => {
   // {username, org}
 
   try{
@@ -106,7 +106,7 @@ const get_contacts_in_same_org = (req, res) => {
 };
 
 // users/deleteContact
-const delete_contact = (req, res) => {
+const delete_contact = async (req, res) => {
   // {username, contact_username}
 
   try{
@@ -119,12 +119,36 @@ const delete_contact = (req, res) => {
   }
 };
 
+// users/getmyapplications
+const get_my_applications = async (req, res) => {
+  // {username, status(all, pending, approved, rejected)}
+  try{
+    const colRef = collection(db, `users/${req.body.username}/Applications`);
+    if(req.body.status === "all"){
+      const Snapshot = await getDocs(colRef);
+      const applicationList = Snapshot.docs.map((doc) => doc.data());
+      console.log(applicationList);
+      res.status(200).send(applicationList);
+    } else{
+      const q = query(colRef, where("status", "==", req.body.status));
+      const Snapshot = await getDocs(q);
+      const applicationList = Snapshot.docs.map((doc) => doc.data());
+      console.log(applicationList);
+      res.status(200).send(applicationList);
+    }
+  } catch(err){
+    res.status(500).send(err.message);
+  }
+}
+
+
 module.exports = {
   user_register,
   getContacts,
   create_new_contact,
   get_contacts_in_same_org,
   delete_contact,
+  get_my_applications,
 };
 
 
