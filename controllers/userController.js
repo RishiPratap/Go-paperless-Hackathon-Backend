@@ -78,7 +78,6 @@ const get_user = async(req, res) => {
   }
 }
 
-
 // users/addcontact
 const create_new_contact = async (req, res) => {
   // {email, contact_email, contact_alias}
@@ -103,8 +102,6 @@ const create_new_contact = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
-
-
 
 // users/getmycontacts
 const getContacts = async (req, res) => {
