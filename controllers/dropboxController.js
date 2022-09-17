@@ -1,21 +1,7 @@
 var fetch = require("isomorphic-fetch");
 var Dropbox = require("dropbox").Dropbox;
 const { auth, db } = require("../firebase");
-const {
-  getDocs,
-  getDoc,
-  collection,
-  addDoc,
-  serverTimestamp,
-  doc,
-  updateDoc,
-  deleteDoc,
-  setDoc,
-  query,
-  where,
-  increment,
-  GeoPoint,
-} = require("firebase/firestore");
+const { doc, setDoc } = require("firebase/firestore");
 
 //dropbox/getfiles  -- POST
 const getFileList = async (req, res) => {
@@ -51,19 +37,22 @@ const createApplication = async (req, res) => {
       console.log(resp);
 
       // ADD FIREBASE CODE HERE
-        const docRef = doc(db, `users/${req.body?.username}/Applications/${req.body?.appName}`);
-        const application_details = {
-          url : resp.result?.url,
-          total_signers : req.body?.signers.length,
-          signers : req.body?.signers,
-          status : "Pending",
-          type : req.body?.applType,
-          alias : req.body?.appName,
-          current_hop : 0,
-        };
-        console.log(application_details);
-        await setDoc(docRef, application_details);
-      
+      const docRef = doc(
+        db,
+        `users/${req.body?.username}/Applications/${req.body?.appName}`
+      );
+      const application_details = {
+        url: resp.result?.url,
+        total_signers: req.body?.signers.length,
+        signers: req.body?.signers,
+        status: "Pending",
+        type: req.body?.applType,
+        alias: req.body?.appName,
+        current_hop: 0,
+      };
+      console.log(application_details);
+      await setDoc(docRef, application_details);
+
       res.status(200).send(resp.result.url);
     })
     .catch((err) => {

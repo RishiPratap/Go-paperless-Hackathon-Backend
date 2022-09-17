@@ -16,6 +16,7 @@
     "express": "^4.18.1",
     "firebase": "^9.9.3",
     "geofirestore": "^5.2.0",
+    "hellosign-sdk": "^2.1.0",
     "isomorphic-fetch": "^3.0.0",
     "jszip": "^3.10.1"
   }
