@@ -58,10 +58,10 @@ const user_register = async (req, res) => {
 
 // users/getuserdetails
 const get_user = async(req, res) => {
-  // {username, password}
+  // {email, password}
 
   try{
-    const docRef = doc(db, `users/${req.body.username}`);
+    const docRef = doc(db, `users/${req.body.email.split("@")[0]}`);
     const userSnapshot = await getDoc(docRef);
     if(userSnapshot.exists()){
       if(userSnapshot.data().password == req.body.password){
