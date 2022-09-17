@@ -55,6 +55,24 @@ const user_register = async (req, res) => {
   }
 };
 
+// users/getuserdetails
+const get_user = async(req, res) => {
+  // {username}
+
+  try{
+    const docRef = doc(db, `users/${req.body.username}`);
+    const userSnapshot = await getDoc(docRef);
+    if(userSnapshot.exists()){
+      res.status(200).send(userSnapshot.data());
+    } else {
+      res.status(500).send("User Does Not Exist");
+    }
+  } catch(err){
+    console.log(err.message);
+  }
+}
+
+
 // users/addcontact
 const create_new_contact = async (req, res) => {
   // {email, contact_email, contact_alias}
@@ -79,6 +97,8 @@ const create_new_contact = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+
+
 
 // users/getmycontacts
 const getContacts = async (req, res) => {
