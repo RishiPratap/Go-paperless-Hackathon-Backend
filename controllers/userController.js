@@ -16,7 +16,7 @@ var hellosign = require("hellosign-sdk")({
 
 // users/createnewuser
 const user_register = async (req, res) => {
-  // {name, rank, email, org}
+  // {name, rank, email, org, password}
 
   try {
     const userData = req.body;
@@ -45,6 +45,7 @@ const user_register = async (req, res) => {
       org: userData.org,
       userName: uid,
       helloSignId: helloSignData.account_id,
+      password : userData.password
     };
     console.log("Basic User Details", basic_doc_details);
     await setDoc(usersRef, basic_doc_details);
@@ -57,13 +58,18 @@ const user_register = async (req, res) => {
 
 // users/getuserdetails
 const get_user = async(req, res) => {
-  // {username}
+  // {username, password}
 
   try{
     const docRef = doc(db, `users/${req.body.username}`);
     const userSnapshot = await getDoc(docRef);
     if(userSnapshot.exists()){
-      res.status(200).send(userSnapshot.data());
+      if(userSnapshot.data().password == req.body.password){
+          res.status(200).send(userSnapshot.data());
+      }
+      else{
+        res.status(500).send("Incorrect Password");
+      }
     } else {
       res.status(500).send("User Does Not Exist");
     }
@@ -179,6 +185,7 @@ module.exports = {
   get_contacts_in_same_org,
   delete_contact,
   get_my_applications,
+  get_user,
 };
 
 // users/gethospital

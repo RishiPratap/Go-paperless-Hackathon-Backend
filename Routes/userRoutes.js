@@ -5,6 +5,7 @@ const router = express.Router();
 
 // /api/users/........
 router.post("/createnewuser", userController.user_register);
+router.post("/getuser", userController.get_user);
 router.post("/getmyapplications", userController.get_my_applications);
 
 
