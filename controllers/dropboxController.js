@@ -1,10 +1,12 @@
 var fetch = require("isomorphic-fetch");
 var Dropbox = require("dropbox").Dropbox;
+const { db } = require("../firebase");
+const { doc, setDoc } = require("firebase/firestore");
 
 //dropbox/getfiles  -- POST
 const getFileList = async (req, res) => {
   //{acessToken, path}
-
+  console.log(req.body);
   var dbx = new Dropbox({ accessToken: req.body?.accessToken, fetch: fetch });
   dbx
     .filesListFolder({
@@ -22,19 +24,35 @@ const getFileList = async (req, res) => {
     });
 };
 
+
 //dropbox/createapplication  -- POST
 const createApplication = async (req, res) => {
-  // {accessToken, appName}
+  // {accessToken, appName, username, applType, signers(array)}
   var dbx = new Dropbox({ accessToken: req.body?.accessToken, fetch: fetch });
   dbx
     .fileRequestsCreate({
       title: req.body?.appName,
       destination: "/" + req.body?.appName,
     })
-    .then((resp) => {
+    .then(async (resp) => {
       console.log(resp);
 
       // ADD FIREBASE CODE HERE
+      const docRef = doc(
+        db,
+        `users/${req.body?.username}/Applications/${req.body?.appName}`
+      );
+      const application_details = {
+        url: resp.result?.url,
+        total_signers: req.body?.signers.length,
+        signers: req.body?.signers,
+        status: "Pending",
+        type: req.body?.applType,
+        alias: req.body?.appName,
+        current_hop: 0,
+      };
+      console.log(application_details);
+      await setDoc(docRef, application_details);
 
       res.status(200).send(resp.result.url);
     })
@@ -62,6 +80,29 @@ const downloadFile = async (req, res) => {
     });
 };
 
+// dropbox/getfilebinary  -- POST
+const downloadIndividualFile = async(req, res) => {
+  console.log(req.body);
+  try{
+    var dbx = new Dropbox({ accessToken: req.body?.accessToken, fetch: fetch });
+    dbx
+      .filesDownload({
+        path: req.body?.path,
+      })
+      .then((resp) => {
+        console.log(resp);
+        res.status(200).send(resp.result.fileBinary);
+      })
+      .catch((err) => {
+        console.log(err?.message);
+        res.status(500).send(err?.message);
+      });
+  } catch(err) {
+    console.log(err.message);
+    res.status(500).send(err.message);
+  }
+}
+
 //dropbox/sharefile  -- POST
 const shareFile = async (req, res) => {
   //{accessToken , path}
@@ -85,4 +126,5 @@ module.exports = {
   createApplication,
   downloadFile,
   shareFile,
+  downloadIndividualFile,
 };

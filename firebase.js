@@ -6,13 +6,13 @@ const { getAuth } = require("firebase/auth");
 console.log(process.env.FIREBASE_API_KEY);
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC50LNksXujYtNjmMTArqwh2Qi8vZk45uY",
-  authDomain: "garuda-hacks-2022.firebaseapp.com",
-  projectId: "garuda-hacks-2022",
-  storageBucket: "garuda-hacks-2022.appspot.com",
-  messagingSenderId: "567504553288",
-  appId: "1:567504553288:web:16fa922a378d1af7b49f7d",
-  measurementId: "G-ZDB2P512D7",
+  apiKey: "AIzaSyBvlzod6y_erkwulDck59xHd6HT04uOX-g",
+  authDomain: "go-paperless-hackathon-2022.firebaseapp.com",
+  projectId: "go-paperless-hackathon-2022",
+  storageBucket: "go-paperless-hackathon-2022.appspot.com",
+  messagingSenderId: "900300196057",
+  appId: "1:900300196057:web:5b3e34b5a48157d2a016c8",
+  measurementId: "G-SCDGHY1GK6"
 };
 
 // Initialize Firebase
