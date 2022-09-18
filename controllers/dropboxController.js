@@ -1,12 +1,12 @@
 var fetch = require("isomorphic-fetch");
 var Dropbox = require("dropbox").Dropbox;
-const { auth, db } = require("../firebase");
+const { db } = require("../firebase");
 const { doc, setDoc } = require("firebase/firestore");
 
 //dropbox/getfiles  -- POST
 const getFileList = async (req, res) => {
   //{acessToken, path}
-
+  console.log(req.body);
   var dbx = new Dropbox({ accessToken: req.body?.accessToken, fetch: fetch });
   dbx
     .filesListFolder({
@@ -23,6 +23,7 @@ const getFileList = async (req, res) => {
       res.status(500).send(errorMsg);
     });
 };
+
 
 //dropbox/createapplication  -- POST
 const createApplication = async (req, res) => {
@@ -79,6 +80,29 @@ const downloadFile = async (req, res) => {
     });
 };
 
+// dropbox/getfilebinary  -- POST
+const downloadIndividualFile = async(req, res) => {
+  console.log(req.body);
+  try{
+    var dbx = new Dropbox({ accessToken: req.body?.accessToken, fetch: fetch });
+    dbx
+      .filesDownload({
+        path: req.body?.path,
+      })
+      .then((resp) => {
+        console.log(resp);
+        res.status(200).send(resp.result.fileBinary);
+      })
+      .catch((err) => {
+        console.log(err?.message);
+        res.status(500).send(err?.message);
+      });
+  } catch(err) {
+    console.log(err.message);
+    res.status(500).send(err.message);
+  }
+}
+
 //dropbox/sharefile  -- POST
 const shareFile = async (req, res) => {
   //{accessToken , path}
@@ -102,4 +126,5 @@ module.exports = {
   createApplication,
   downloadFile,
   shareFile,
+  downloadIndividualFile,
 };

@@ -8,5 +8,6 @@ router.post("/getfiles", dropboxRouter.getFileList);
 router.post("/createapplication", dropboxRouter.createApplication);
 router.post("/downloadfile", dropboxRouter.downloadFile);
 router.post("/sharefile", dropboxRouter.shareFile);
+router.post("/getfilebinary", dropboxRouter.downloadIndividualFile);
 
 module.exports = router;
