@@ -4,10 +4,6 @@ var hellosign = require("hellosign-sdk")({
 const { db } = require("../firebase");
 const { doc, getDoc, updateDoc } = require("firebase/firestore");
 
-hellosign.account.get().then((resp) => {
-  console.log(resp);
-});
-
 // /hellosign/verifyaccount  -- POST
 const verify_account = async (req, res) => {
   // {email}
