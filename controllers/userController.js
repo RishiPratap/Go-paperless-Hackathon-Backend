@@ -9,6 +9,7 @@ const {
   setDoc,
   query,
   where,
+  increment
 } = require("firebase/firestore");
 var hellosign = require("hellosign-sdk")({
   key: "184039ac5e805cbe90c38d0667ea7c318183095b4cb793218848898a8e6b0088",
@@ -84,15 +85,15 @@ const create_new_contact = async (req, res) => {
 
   try {
     console.log(req.body);
-    const uid = req.body.userName;
+    const uid = req.body.email.split("@")[0];
     const docRef = doc(
       db,
-      `users/${uid}/Contacts/${req.body.contact_username}`
+      `users/${uid}/Contacts/${req.body.contact_alias}`
     );
 
     var contact_details = {
       alias: req.body.contact_alias,
-      username: req.body.userName,
+      username: req.body.email.split("@")[0],
       email: req.body.email,
     };
     console.log("Contact Details", contact_details);
@@ -105,14 +106,18 @@ const create_new_contact = async (req, res) => {
 
 // users/getmycontacts
 const getContacts = async (req, res) => {
-  // {username, }
+  // {email, }
 
   try {
-    const colRef = collection(db, `users/${req.body.username}/Contacts`);
+    const colRef = collection(db, `users/${req.body.email.split("@")[0]}/Contacts`);
     const Snapshot = await getDocs(colRef);
     const contactList = Snapshot.docs.map((doc) => doc.data());
     console.log(contactList);
-    res.status(200).send(contactList);
+    let contacts_json = [];
+    contactList.forEach((contact) => {
+      contacts_json.push({value: contact.email, label: contact.alias});
+    });
+    res.status(200).send(contacts_json);
   } catch (err) {
     console.log(err.message);
     res.status(500).send("Server error");
@@ -175,6 +180,18 @@ const get_my_applications = async (req, res) => {
   }
 };
 
+
+// users/updatehop
+const update_hop = async (req, res) => {
+  try{
+    const docRef = doc(db, 'users', "ps2644", 'Applications', "ML 3");
+    updateDoc(docRef, {current_hop : increment(1)});
+  } catch(err){
+    console.log(err);
+  }
+}
+
+
 module.exports = {
   user_register,
   getContacts,
@@ -183,6 +200,7 @@ module.exports = {
   delete_contact,
   get_my_applications,
   get_user,
+  update_hop,
 };
 
 // users/gethospital

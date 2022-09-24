@@ -15,6 +15,7 @@ app.get("/", (req, res) => {
 
 app.use("/users", require("./Routes/userRoutes"));
 app.use("/dropbox", require("./Routes/dropboxRouter"));
+app.use("/hellosign", require("./Routes/helloSignRouter"));
 // app.get("/:username", (req, res) => {
 //   res.send(`Hey ${req.params.username}`);
 // });
