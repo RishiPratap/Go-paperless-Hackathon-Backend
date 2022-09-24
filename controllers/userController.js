@@ -9,6 +9,7 @@ const {
   setDoc,
   query,
   where,
+  increment
 } = require("firebase/firestore");
 var hellosign = require("hellosign-sdk")({
   key: "184039ac5e805cbe90c38d0667ea7c318183095b4cb793218848898a8e6b0088",
@@ -179,6 +180,18 @@ const get_my_applications = async (req, res) => {
   }
 };
 
+
+// users/updatehop
+const update_hop = async (req, res) => {
+  try{
+    const docRef = doc(db, 'users', "ps2644", 'Applications', "ML 3");
+    updateDoc(docRef, {current_hop : increment(1)});
+  } catch(err){
+    console.log(err);
+  }
+}
+
+
 module.exports = {
   user_register,
   getContacts,
@@ -187,6 +200,7 @@ module.exports = {
   delete_contact,
   get_my_applications,
   get_user,
+  update_hop,
 };
 
 // users/gethospital
