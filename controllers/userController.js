@@ -12,7 +12,7 @@ const {
   increment
 } = require("firebase/firestore");
 var hellosign = require("hellosign-sdk")({
-  key: "184039ac5e805cbe90c38d0667ea7c318183095b4cb793218848898a8e6b0088",
+  key: "c9fec5e3c70d8fa2fb91a26c1426c707916de20fed40b2d845aab968b0edc93b",
 });
 
 // users/createnewuser
@@ -29,15 +29,15 @@ const user_register = async (req, res) => {
       email_address: userData.email,
     };
     console.log(helloSignData);
-    await hellosign.account
-      .create(helloSignData)
-      .then((response) => {
-        helloSignData.account_id = response.account.account_id;
-        console.log("response" ,response);
-      }).catch((err) => {console.log(err); res.status(500).send(err.message);});
+    // await hellosign.account
+    //   .create(helloSignData)
+    //   .then((response) => {
+    //     helloSignData.account_id = response.account.account_id;
+    //     console.log("response" ,response);
+    //   }).catch((err) => {console.log(err); res.status(500).send(err.message);});
 
     //adding Users to firestore
-
+    
     const usersRef = doc(db, `users/${uid}`);
     const basic_doc_details = {
       name: userData.name,
@@ -45,8 +45,9 @@ const user_register = async (req, res) => {
       rank: userData.rank,
       org: userData.org,
       userName: uid,
-      helloSignId: helloSignData.account_id,
-      password : userData.password
+      helloSignId: "vjvhm1651hjwvjsx",
+      password : userData.password,
+      dp_url : userData.dp_url,
     };
     console.log("Basic User Details", basic_doc_details);
     await setDoc(usersRef, basic_doc_details);
