@@ -1,7 +1,7 @@
 var fetch = require("isomorphic-fetch");
 var Dropbox = require("dropbox").Dropbox;
 const { db } = require("../firebase");
-const { getDocs, getDoc, collection, doc } = require("firebase/firestore");
+const { getDocs, getDoc, collection, doc, setDoc } = require("firebase/firestore");
 
 // dropbox/viewapplication  -- POST
 const viewApplications = async (req, res) => {
