@@ -72,6 +72,7 @@ const verify_account = async (req, res) => {
 
 const get_sign_url = async (req, res) => {
   // {email, application_name}
+  console.log(req.body);
   try{
     const docRef = doc(db, `users/${req.body.email.split("@")[0]}/Applications/${req.body.application_name}`);
     const docSnap = await getDoc(docRef);

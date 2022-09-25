@@ -53,7 +53,7 @@ const viewApplications = async (req, res) => {
 
 //dropbox/getprogress  -- POST
 const getFileList = async (req, res) => {
-  //{acessToken, path}
+  //{acessToken, path, email}
   console.log(req.body);
   const refPath = `users/${req.body.email.split("@")[0]}/Applications/${
     req.body.path
