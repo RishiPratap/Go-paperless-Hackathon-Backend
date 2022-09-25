@@ -185,9 +185,27 @@ const get_my_applications = async (req, res) => {
 // users/updatehop
 const update_hop = async (req, res) => {
   try{
+    console.log(req.body);
     const docRef = doc(db, 'users', req.body.email.split("@")[0], 'Applications', req.body.application_name);
-    updateDoc(docRef, {current_hop : increment(1)});
+    const docSnap = await getDoc(docRef);
+    console.log(docSnap.data());
+    if(docSnap.exists()){
+      const docData = docSnap.data();
+      if(docData.current_hop < docData.total_signers - 1){
+        updateDoc(docRef, {current_hop : increment(1)});
+        const newDocRef = doc(db, "users", docData.signers[docData.current_hop + 1].split("@")[0], "Inbox", req.body.email.split("@")[0]);
+        setDoc(newDocRef, {application_name : docData.alias, requester : req.body.email});
+        console.log("Success");
+        res.status(200).send("Success");
+      } else{
+        updateDoc(docRef, {current_hop : increment(1)});
+        updateDoc(docRef, {status : "Accepted"})
+        console.log("Success");
+        res.status(200).send("Application Status Complete");
+      }
+    }
   } catch(err){
+    res.status(500).send("Server Error");
     console.log(err);
   }
 }

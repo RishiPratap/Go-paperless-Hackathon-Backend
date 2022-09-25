@@ -11,13 +11,20 @@ const viewApplications = async (req, res) => {
       db,
       `users/${req.body?.email.split("@")[0]}/Applications`
     );
+    const colRef2 = collection(db, 'users', req.body?.email.split("@")[0], 'Inbox');
     const docSnap = await getDocs(colRef);
+    const inboxSnap = await getDocs(colRef2);
     const docList = docSnap.docs.map((doc) => doc.data());
+    const inboxList = inboxSnap.docs.map((doc) => doc.data());
     console.log("DocList", docList);
+    console.log("DocList", inboxList);
 
     const applications = [];
     docList.forEach((doc) => {
-      applications.push({ name: doc.alias, status: doc.status });
+      applications.push({ name: doc.alias, status: doc.status});
+    });
+    inboxList.forEach((doc) => {
+      applications.push({ name: doc.application_name, requester: doc.requester, status : "Inbox"});
     });
     console.log(applications);
     res.status(200).send(applications);
