@@ -67,7 +67,7 @@ const create_application = async (req, res) => {
     .catch((err) => {
       console.log(err);
     });
-
+    
 };
 
 //hellosign/getsignurl
@@ -79,6 +79,7 @@ const get_sign_url = async (req, res) => {
     if (docSnap.exists()) {
       console.log("Document data:", docSnap.data());
       responseData = docSnap.data();
+      console.log("Response hai ye ",responseData);
       const signature_id = responseData.signature_request.signatures[responseData.current_hop].signature_id;
       hellosign.embedded.getSignUrl(signature_id).then((resp) => {
         console.log(resp);

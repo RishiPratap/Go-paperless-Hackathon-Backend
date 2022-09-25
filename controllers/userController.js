@@ -185,7 +185,7 @@ const get_my_applications = async (req, res) => {
 // users/updatehop
 const update_hop = async (req, res) => {
   try{
-    const docRef = doc(db, 'users', "ps2644", 'Applications', "ML 3");
+    const docRef = doc(db, 'users', req.body.email.split("@")[0], 'Applications', req.body.application_name);
     updateDoc(docRef, {current_hop : increment(1)});
   } catch(err){
     console.log(err);

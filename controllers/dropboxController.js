@@ -36,10 +36,12 @@ const getFileList = async (req, res) => {
   const docRef = doc(db, refPath);
   // console.log(docRef);
   const userSnapshot = await getDoc(docRef);
+  const data_user = userSnapshot.data();
 
   let response = {
-    current_hop: userSnapshot.data().current_hop,
-    total_hops: userSnapshot.data().total_signers,
+    current_hop: data_user.current_hop,
+    total_hops: data_user.total_signers,
+    signers : data_user.signers,
     files: [],
   };
   var dbx = new Dropbox({ accessToken: req.body?.accessToken, fetch: fetch });
