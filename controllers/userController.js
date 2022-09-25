@@ -189,8 +189,7 @@ const update_hop = async (req, res) => {
     const docRef = doc(db, 'users', req.body.email.split("@")[0], 'Applications', req.body.application_name);
     const docSnap = await getDoc(docRef);
     console.log(docSnap.data());
-    if(docSnap.exists()){
-      const docData = docSnap.data();
+    const docData = docSnap.data();
       if(docData.current_hop < docData.total_signers - 1){
         updateDoc(docRef, {current_hop : increment(1)});
         const newDocRef = doc(db, "users", docData.signers[docData.current_hop + 1].split("@")[0], "Inbox", req.body.email.split("@")[0]);
@@ -203,7 +202,11 @@ const update_hop = async (req, res) => {
         console.log("Success");
         res.status(200).send("Application Status Complete");
       }
-    }
+
+      if(docData.current_hop != 0){
+        const prevDocRef = doc(db, "users", docData.signers[docData.current_hop].split("@")[0], "Inbox", req.body.email.split("@")[0]);
+        deleteDoc(prevDocRef);
+      }
   } catch(err){
     res.status(500).send("Server Error");
     console.log(err);

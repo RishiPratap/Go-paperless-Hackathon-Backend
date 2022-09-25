@@ -24,8 +24,6 @@ const verify_account = async (req, res) => {
 
 const create_application = async (req, res) => {
   // {email, application_name, signers(array)}
-  email = "ps2644@srmist.edu.in";
-  application_name = "ML 3";
   var options = {
     test_mode: 1,
     clientId: "7c6cd4722bf993f3508d03033f104bce",
@@ -59,8 +57,8 @@ const create_application = async (req, res) => {
     .then(async (resp) => {
       console.log(resp);
       responseData = resp;
-      const docRef = doc(db, `users/${email.split("@")[0]}/Applications/${application_name}`);
-      await updateDoc(docRef, {signature_request : responseData.signature_request});
+      const docRef = doc(db, `users/${req.body.email.split("@")[0]}/Applications/${req.body.application_name}`);
+      await updateDoc(docRef, {signature_request   : responseData.signature_request});
     console.log("Done Successfully");
       res.status(200).send(resp.signature_request);
     })
@@ -68,7 +66,6 @@ const create_application = async (req, res) => {
       console.log(err);
       res.status(500).send(err);
     });
-
 };
 
 //hellosign/getsignurl
