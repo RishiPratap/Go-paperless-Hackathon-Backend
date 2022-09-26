@@ -114,9 +114,10 @@ const createApplication = async (req, res) => {
         title: "Title Here",
         message: "Message Here",
         signers: [],
-        file_url: [
-          "https://www.dropbox.com/s/1q3aw1wltxpswbl/Parth%20Sundarka%20-%20WhatsApp%20Image%202022-09-15%20at%206.58.06%20PM.jpeg?dl=0",
-        ],
+        files : ["./Application Form.pdf"],
+        // file_url: [
+        //   "https://drive.google.com/file/d/1LI6r5yyB1qHqYcb64waPOLDoynbw0K1c/view?usp=sharing",
+        // ],
       };
       for (let i = 0; i < req.body.signers.length; i++) {
         options.signers.push({
