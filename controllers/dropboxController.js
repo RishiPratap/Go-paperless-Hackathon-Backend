@@ -111,7 +111,7 @@ const createApplication = async (req, res) => {
         test_mode: 1,
         clientId: "7c6cd4722bf993f3508d03033f104bce",
         subject: "Subject Here",
-        title: "Title Here",
+        title: "Medical Leave Application",
         message: "Message Here",
         signers: [],
         files : ["./Application Form.pdf"],

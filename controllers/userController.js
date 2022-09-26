@@ -94,8 +94,7 @@ const create_new_contact = async (req, res) => {
 
     var contact_details = {
       alias: req.body.contact_alias,
-      username: req.body.email.split("@")[0],
-      email: req.body.email,
+      email: req.body.contact_email,
     };
     console.log("Contact Details", contact_details);
     await setDoc(docRef, contact_details);
